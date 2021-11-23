@@ -1,6 +1,6 @@
 /* global btoa */
 (function (root) {
-  let base64
+  var base64
 
   // This function's sole purpose is to help us ignore lone surrogates so that
   // malformed strings don't throw in the browser while being processed
@@ -8,7 +8,7 @@
   // of it.
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/charAt
   function getWholeCharAndI (str, i) {
-    const code = str.charCodeAt(i)
+    var code = str.charCodeAt(i)
 
     // This is a coherence check. `code` should never be `NaN`.
     /* istanbul ignore if */
@@ -25,7 +25,7 @@
         // High surrogate without following low surrogate
         return [' ', i]
       }
-      const next = str.charCodeAt(i + 1)
+      var next = str.charCodeAt(i + 1)
       if (next < 0xDC00 || next > 0xDFFF) {
         // High surrogate without following low surrogate
         return [' ', i]
@@ -39,7 +39,7 @@
       return [' ', i]
     }
 
-    const prev = str.charCodeAt(i - 1)
+    var prev = str.charCodeAt(i - 1)
 
     /* istanbul ignore else */
     if (prev < 0xD800 || prev > 0xDBFF) {
@@ -60,10 +60,10 @@
       // Polyfill for environments that don't have btoa or Buffer class (notably, React Native).
       // Based on https://github.com/davidchambers/Base64.js/blob/a121f75bb10c8dd5d557886c4b1069b31258d230/base64.js
       base64 = function (input) {
-        const str = unescape(encodeURIComponent(input + ''))
-        let output = ''
+        var str = unescape(encodeURIComponent(input + ''))
+        var output = ''
         for (
-          let block, charCode, idx = 0, map = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+          var block, charCode, idx = 0, map = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
           str.charAt(idx | 0) || (map = '=', idx % 1);
           output += map.charAt(63 & block >> 8 - idx % 1 * 8)
         ) {
@@ -96,10 +96,10 @@
           throw new TypeError('Cannot convert undefined or null to object')
         }
 
-        const to = Object(target)
+        var to = Object(target)
 
-        for (let index = 1; index < arguments.length; index++) {
-          const nextSource = arguments[index]
+        for (var index = 1; index < arguments.length; index++) {
+          var nextSource = arguments[index]
 
           if (nextSource !== null && nextSource !== undefined) {
             // eslint-disable-next-line no-var
@@ -119,13 +119,13 @@
   }
 
   function slug (string, opts) {
-    let result = slugify(string, opts)
+    var result = slugify(string, opts)
     // If output is an empty string, try slug for base64 of string.
     if (result === '') {
       // Get rid of lone surrogates.
-      let input = ''
-      for (let i = 0; i < string.length; i++) {
-        const charAndI = getWholeCharAndI(string, i)
+      var input = ''
+      for (var i = 0; i < string.length; i++) {
+        var charAndI = getWholeCharAndI(string, i)
         i = charAndI[1]
         input += charAndI[0]
       }
@@ -134,7 +134,7 @@
     return result
   }
 
-  const locales = {
+  var locales = {
     // http://www.eki.ee/wgrs/rom1_bg.pdf
     bg: { Й: 'Y', й: 'y', X: 'H', x: 'h', Ц: 'Ts', ц: 'ts', Щ: 'Sht', щ: 'sht', Ъ: 'A', ъ: 'a', Ь: 'Y', ь: 'y' },
     // Need a reference URL for German, although this is pretty well-known.
@@ -152,20 +152,20 @@
     if (typeof opts === 'string') { opts = { replacement: opts } }
     opts = opts ? Object.assign({}, opts) : {}
     opts.mode = opts.mode || slug.defaults.mode
-    const defaults = slug.defaults.modes[opts.mode]
-    const keys = ['replacement', 'multicharmap', 'charmap', 'remove', 'lower', 'trim']
-    for (let key, i = 0, l = keys.length; i < l; i++) {
+    var defaults = slug.defaults.modes[opts.mode]
+    var keys = ['replacement', 'multicharmap', 'charmap', 'remove', 'lower', 'trim']
+    for (var key, i = 0, l = keys.length; i < l; i++) {
       key = keys[i]
       opts[key] = (key in opts) ? opts[key] : defaults[key]
     }
-    const localeMap = locales[opts.locale] || {}
+    var localeMap = locales[opts.locale] || {}
 
-    let lengths = []
-    // "let" instead of "const" in next line is for IE11 compatibilty
-    for (let key in opts.multicharmap) { // eslint-disable-line prefer-const
+    var lengths = []
+    // "var" instead of "var" in next line is for IE11 compatibilty
+    for (var key in opts.multicharmap) { // eslint-disable-line prefer-var
       if (!Object.prototype.hasOwnProperty.call(opts.multicharmap, key)) { continue }
 
-      const len = key.length
+      var len = key.length
       if (lengths.indexOf(len) === -1) { lengths.push(len) }
     }
 
@@ -173,15 +173,15 @@
     // sort lengths in descending order.
     lengths = lengths.sort(function (a, b) { return b - a })
 
-    const disallowedChars = opts.mode === 'rfc3986' ? /[^\w\s\-.~]/ : /[^A-Za-z0-9\s]/
+    var disallowedChars = opts.mode === 'rfc3986' ? /[^\w\s\-.~]/ : /[^A-Za-z0-9\s]/
 
-    let result = ''
-    for (let char, i = 0, l = string.length; i < l; i++) {
+    var result = ''
+    for (var char, i = 0, l = string.length; i < l; i++) {
       char = string[i]
-      let matchedMultichar = false
-      for (let j = 0; j < lengths.length; j++) {
-        const len = lengths[j]
-        const str = string.substr(i, len)
+      var matchedMultichar = false
+      for (var j = 0; j < lengths.length; j++) {
+        var len = lengths[j]
+        var str = string.substr(i, len)
         if (opts.multicharmap[str]) {
           i += len - 1
           char = opts.multicharmap[str]
@@ -217,7 +217,7 @@
     return result
   }
 
-  const initialMulticharmap = {
+  var initialMulticharmap = {
     // multibyte devanagari characters (hindi, sanskrit, etc.)
     फ़: 'Fi',
     ग़: 'Ghi',
@@ -254,7 +254,7 @@
   }
 
   // https://github.com/django/django/blob/master/django/contrib/admin/static/admin/js/urlify.js
-  const initialCharmap = {
+  var initialCharmap = {
     // latin
     À: 'A',
     Á: 'A',
@@ -895,10 +895,10 @@
   }
 
   slug.extend = function (customMap) {
-    const keys = Object.keys(customMap)
-    const multi = {}
-    const single = {}
-    for (let i = 0; i < keys.length; i++) {
+    var keys = Object.keys(customMap)
+    var multi = {}
+    var single = {}
+    for (var i = 0; i < keys.length; i++) {
       if (keys[i].length > 1) {
         multi[keys[i]] = customMap[keys[i]]
       } else {
